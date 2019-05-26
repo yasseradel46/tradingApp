@@ -30,8 +30,9 @@ public class ReportedUser implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
 	private Date creationDate;
-
-	private int notes;
+	
+	@Column(name = "notes")
+	private String notes;
 
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne

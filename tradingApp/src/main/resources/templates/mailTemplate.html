@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    
+    Thank you for registering with <span th:text="${appName}"></span>!<br/>
+
+For your account confirmation, please click the link below to verify this account.<br/>
+
+<p><a th:href="${verificationLink}">Verification Link</a></p><br/>
+
+You may also copy the web address below and paste it to the browser for confirmation.<br/>
+
+<span th:text="${verificationLink}"></span><br/>
+
+If you did not register with <span th:text="${appName}"></span>, please ignore this letter.
+</body>
+</html>

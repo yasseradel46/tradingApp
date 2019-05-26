@@ -27,6 +27,7 @@ public class ItemComment implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
+	@Column(name = "comment")
 	private String comment;
 
 	@Temporal(TemporalType.TIMESTAMP)

@@ -27,8 +27,9 @@ public class LookupGroup implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-
-	private int name;
+	
+	@Column(name = "name")
+	private String name;
 
 	@OneToMany
 	@JoinColumn(name = "lookup_id")

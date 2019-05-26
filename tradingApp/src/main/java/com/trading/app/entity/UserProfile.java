@@ -25,27 +25,31 @@ public class UserProfile implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private int userId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
 	private Date creationDate;
-
+	
+	@Column(name = "email")
 	private String email;
 
 	@Column(name = "is_active")
 	private int isActive;
 
+	@Column(name = "location")
 	private String location;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "modification_date")
 	private Date modificationDate;
 
+	@Column(name = "password")
 	private String password;
 
+	@Column(name = "phone")
 	private String phone;
 
 	@Column(name = "phone_activation_code")
