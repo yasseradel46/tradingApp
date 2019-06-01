@@ -9,11 +9,16 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 @Component
 public class TradingAppUtil {
@@ -37,8 +42,23 @@ public class TradingAppUtil {
 	@Value("${app.email.encryptionAlgorithm}")
 	private String encryptionAlgorithm;
 
+	@Value("${app.email.encryptionAlgorithmLength}")
+	private Integer encryptionAlgorithmLength;
+
 	@Value("${app.email.encryptionPassword}")
 	private String encryptionPassword;
+
+	@Value("${app.sendsms.auth.token}")
+	private String smsToken;
+
+	@Value("${app.sendsms.accout.sid}")
+	private String smsAccountSid;
+
+	@Value("${app.sendsms.phoneNumber}")
+	private String smsAppPhoneNumber;
+
+	@Value("${app.sendsms.activationMsg}")
+	private String smsActivationMsg;
 
 	private ObjectMapper mapper = new ObjectMapper();
 	private MessageCrypter MessageCrypter = null;
@@ -57,13 +77,23 @@ public class TradingAppUtil {
 		}
 	}
 
+	public void sendActivationSMS(String toNumber, String activationCode) {
+		Twilio.init(smsAccountSid, smsToken);
+		Message.creator(new PhoneNumber(toNumber), new PhoneNumber(smsAppPhoneNumber),
+				smsActivationMsg + activationCode).create();
+	}
+
+	public String generateRandomPhoneActivation() {
+		return String.valueOf(((int) (Math.random() * 9000) + 1000));
+	}
+
 	public String decryptEmail(String emailCode) {
-		MessageCrypter = new MessageCrypter(encryptionPassword, 16, encryptionAlgorithm);
+		MessageCrypter = new MessageCrypter(encryptionPassword, encryptionAlgorithmLength, encryptionAlgorithm);
 		return MessageCrypter.decrypt(emailCode);
 	}
 
 	private String buildEmailContent(String email) {
-		MessageCrypter = new MessageCrypter(encryptionPassword, 16, encryptionAlgorithm);
+		MessageCrypter = new MessageCrypter(encryptionPassword, encryptionAlgorithmLength, encryptionAlgorithm);
 		Context context = new Context();
 		String verificationLink = verificationApi + MessageCrypter.encrypt(email);
 		context.setVariable("appName", appName);
@@ -79,6 +109,17 @@ public class TradingAppUtil {
 			logger.error("Error Parsing API Response", e);
 		}
 		return json;
+	}
+
+	public String getLoggedInUserEmail() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String email = null;
+		if (principal instanceof UserDetails) {
+			email = ((UserDetails) principal).getUsername();
+		} else {
+			email = principal.toString();
+		}
+		return email;
 	}
 
 	public <T> T convertJsonToObject(String json, Class<T> classType) {

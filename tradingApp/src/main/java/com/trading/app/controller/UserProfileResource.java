@@ -13,7 +13,6 @@ import com.trading.app.dto.ResponseDTO;
 import com.trading.app.dto.UserProfileDTO;
 import com.trading.app.service.UserProfileService;
 import com.trading.app.util.TradingAppUtil;
-
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +29,14 @@ import static com.trading.app.util.SwaggerConstant.USER_PROFILE_ACTIVATE_EMAIL_I
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_ACTIVATE_EMAIL_PARAM;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_SEND_EMAIL_ACTIVATION_INFO;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_SEND_EMAIL_ACTIVATION_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_CHANGE_PASSWORD_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_CHANGE_PASSWORD_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_SEND_PHONE_ACTIVATION_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_SEND_PHONE_ACTIVATION_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_VERIFY_PHONE_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_VERIFY_PHONE_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UPDATE_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UPDATE_PARAM;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -43,15 +50,29 @@ public class UserProfileResource {
 	@Autowired
 	private TradingAppUtil tradingUtil;
 
-	@RequestMapping(path = "/signUp", method = RequestMethod.POST)
+	@RequestMapping(path = "/signup", method = RequestMethod.POST)
 	@ApiOperation(value = USER_PROFILE_SIGNUP_INFO)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
 			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
 			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
 			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
-	public ResponseEntity<ResponseDTO<?>> signUp(
+	public ResponseEntity<ResponseDTO<?>> signup(
 			@ApiParam(value = USER_PROFILE_SIGNUP_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
-		logger.info("SignUp Api received Request with payload " + tradingUtil.convertObjectToString(userProfileDTO));
+		logger.info("Signup Api received Request with payload " + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.registerUserProfile(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/updateUserInfo", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_UPDATE_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> updateUserInfo(
+			@ApiParam(value = USER_PROFILE_UPDATE_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("UpdateUserInfo Api received Request with payload "
+				+ tradingUtil.convertObjectToString(userProfileDTO));
 		ResponseDTO<?> response = userProfileService.saveUserProfile(userProfileDTO);
 		return ResponseEntity.ok().body(response);
 	}
@@ -64,7 +85,7 @@ public class UserProfileResource {
 			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
 	public ResponseEntity<ResponseDTO<?>> activateEmail(
 			@ApiParam(value = USER_PROFILE_ACTIVATE_EMAIL_PARAM, required = true) @RequestParam("code") String code) {
-		logger.info("activateEmail Api received Request with payload " + code);
+		logger.info("ActivateEmail Api received Request with payload " + code);
 		ResponseDTO<?> response = userProfileService.activeUserEmail(code);
 		return ResponseEntity.ok().body(response);
 	}
@@ -77,9 +98,50 @@ public class UserProfileResource {
 			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
 	public ResponseEntity<ResponseDTO<?>> sendEmailActivation(
 			@ApiParam(value = USER_PROFILE_SEND_EMAIL_ACTIVATION_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
-		logger.info(
-				"sendEmailActivation Api received Request with payload " + tradingUtil.convertObjectToString(userProfileDTO));
+		logger.info("SendEmailActivation Api received Request with payload "
+				+ tradingUtil.convertObjectToString(userProfileDTO));
 		ResponseDTO<?> response = userProfileService.sendEmailActivation(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/changePassword", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_CHANGE_PASSWORD_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> changePassword(
+			@ApiParam(value = USER_PROFILE_CHANGE_PASSWORD_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("ChangePassword Api received Request with payload "
+				+ tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.updateUserPassword(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/sendPhoneActivation", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_SEND_PHONE_ACTIVATION_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> sendPhoneActivation(
+			@ApiParam(value = USER_PROFILE_SEND_PHONE_ACTIVATION_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("SendPhoneActivation Api received Request with payload "
+				+ tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.sendPhoneActivation(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/verifyPhone", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_VERIFY_PHONE_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> verifyPhone(
+			@ApiParam(value = USER_PROFILE_VERIFY_PHONE_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("VerifyPhone Api received Request with payload " + userProfileDTO);
+		ResponseDTO<?> response = userProfileService.verifyUserPhone(userProfileDTO);
 		return ResponseEntity.ok().body(response);
 	}
 }

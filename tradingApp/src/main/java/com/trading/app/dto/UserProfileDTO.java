@@ -36,5 +36,7 @@ public class UserProfileDTO implements Serializable {
 	private byte[] photo;
 
 	private String userName;
+	
+	private String newPassword;
 
 }

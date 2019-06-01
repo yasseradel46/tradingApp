@@ -7,10 +7,20 @@ public class SwaggerConstant {
 	public static final String NOT_FOUND_OPERATION = "The resource you were trying to reach is not found";
 	public static final String USER_PROFILE_RESOURCE_INFO = "Manage All Operations related with Trading User";
 	public static final String USER_PROFILE_SIGNUP_INFO = "signup User Profile Info";
+	public static final String USER_PROFILE_UPDATE_INFO = "Update User Profile Info";
+	public static final String USER_PROFILE_UPDATE_PARAM = "UserProfileDTO object with Updated Info UserName,Location and Photo";
 	public static final String USER_PROFILE_SIGNUP_PARAM = "UserProfileDTO object with at least UserName,Email and Password";
 	public static final String USER_PROFILE_ACTIVATE_EMAIL_INFO = "Activate User Email ";
 	public static final String USER_PROFILE_ACTIVATE_EMAIL_PARAM = "Encrypted User Email";
 	public static final String USER_PROFILE_SEND_EMAIL_ACTIVATION_INFO = "Send Email to User with Activation Code of his/here Email";
+	public static final String USER_PROFILE_SEND_PHONE_ACTIVATION_INFO = "Send SMS to User Phone with Activation Code of his/here Phone";
+	public static final String USER_PROFILE_SEND_PHONE_ACTIVATION_PARAM = "UserProfileDTO object with at least  Phone number";
+	public static final String USER_PROFILE_LOGIN_INFO = "Login Api with Email and Password";
+	public static final String USER_PROFILE_CHANGE_PASSWORD_INFO = "Change Password Api";
+	public static final String USER_PROFILE_CHANGE_PASSWORD_PARAM = "UserProfileDTO object with at least  Current password and new Password";
 	public static final String USER_PROFILE_SEND_EMAIL_ACTIVATION_PARAM = "UserProfileDTO object with at least Email For sending Activation Code";
+	public static final String USER_PROFILE_LOGIN_PARAM = "UserProfileDTO object with  Email And Password";
+	public static final String USER_PROFILE_VERIFY_PHONE_INFO = "Verify User Phone by sending The Received SMS code ";
+	public static final String USER_PROFILE_VERIFY_PHONE_PARAM = "UserProfileDTO object with at least phone Number and SMS Activation Code";
 
 }
