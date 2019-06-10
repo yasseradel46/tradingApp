@@ -14,13 +14,14 @@ public class TradingAppConstant {
 	public static final String USER_SEND_Phone_ACTIVATION_MSG = "Activation code sent to Your Phone Successfully, PLease check Your Phone";
 	public static final String CHANGE_PASSWORD_SUCCESS_MSG = "Your Password changed Successfully";
 	public static final String CHANGE_PASSWORD_Fail_MSG = "Invalid Current Password";
+	public static final String SUCCESS_OPERATION_MSG = "Success Operation";
 	public static final String INVALID_TOKEN_MSG = "Invalid Token Format";
 	public static final Integer RESPONSE_EXCEPTION_CODE = 500;
 	public static final Integer USER_ACTIVE_CODE = 1;
 	public static final Integer RESPONSE_SUCCESS_CODE = 200;
 	public static final Integer RESPONSE_INVALID_CODE = 205;
 	public static final String SECRET = "SecretKeyToGenJWTs";
-	public static final long EXPIRATION_TIME = 120_000; // 2 minutes
+	public static final long EXPIRATION_TIME = 3600_000; // 60 minutes
 	public static final String TOKEN_PREFIX = "Bearer ";
 	public static final String HEADER_STRING = "Authorization";
 	public static final String SIGN_UP_URL = "/user/signup";
@@ -28,5 +29,8 @@ public class TradingAppConstant {
 	public static final String ACTIVATE_EMAIL_URL = "/user/activateEmail";
 	public static final String SEND_EMAIL_ACTIVATION_URL = "/user/sendEmailActivation";
 	public static final String SWAGGER_URL = "/swagger-ui.html";
+	public static final Integer ITEM_AVAILABLE_STATUS = 6;
+	public static final Integer ITEM_DELETED_STATUS = 5;
+	public static final Integer ITEM_SWAPED_STATUS = 4;
 
 }

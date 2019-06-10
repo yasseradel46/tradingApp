@@ -37,6 +37,14 @@ import static com.trading.app.util.SwaggerConstant.USER_PROFILE_VERIFY_PHONE_INF
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_VERIFY_PHONE_PARAM;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UPDATE_INFO;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UPDATE_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_FOLLOWING_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_FOLLOWERS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_FOLLOWING_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_FOLLOWERS_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_FOLLOW_USER_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UNFOLLOW_USER_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UNFOLLOW_USER_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_FOLLOW_USER_PARAM;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -140,8 +148,63 @@ public class UserProfileResource {
 			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
 	public ResponseEntity<ResponseDTO<?>> verifyPhone(
 			@ApiParam(value = USER_PROFILE_VERIFY_PHONE_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
-		logger.info("VerifyPhone Api received Request with payload " + userProfileDTO);
+		logger.info(
+				"VerifyPhone Api received Request with payload " + tradingUtil.convertObjectToString(userProfileDTO));
 		ResponseDTO<?> response = userProfileService.verifyUserPhone(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getFollowing", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_GET_FOLLOWING_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getFollowing(
+			@ApiParam(value = USER_PROFILE_GET_FOLLOWING_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info(
+				"GetFollowing Api received Request with payload " + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.getRelatedUsers(true, userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getFollowers", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_GET_FOLLOWERS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getFollowers(
+			@ApiParam(value = USER_PROFILE_GET_FOLLOWERS_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info(
+				"GetFollowers Api received Request with payload " + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.getRelatedUsers(false, userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/followUser", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_FOLLOW_USER_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> followUser(
+			@ApiParam(value = USER_PROFILE_FOLLOW_USER_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("FollowUser Api received Request payload" + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.followUser(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/unFollowUser", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_UNFOLLOW_USER_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> unFollowUser(
+			@ApiParam(value = USER_PROFILE_UNFOLLOW_USER_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("unFollowUser Api received Request payload" + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.unFollowUser(userProfileDTO);
 		return ResponseEntity.ok().body(response);
 	}
 }

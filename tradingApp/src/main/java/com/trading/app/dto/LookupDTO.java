@@ -5,38 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.Date;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileDTO implements Serializable {
-
+public class LookupDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private int userId;
+	private Integer lookupId;
 
 	private Date creationDate;
 
-	private String email;
-
-	private int isActive;
-
-	private String location;
+	private String lookupDescription;
 
 	private Date modificationDate;
 
-	private String password;
-
-	private String phone;
-
-	private String phoneActivationCode;
-
-	private String photo;
-
-	private String userName;
-	
-	private String newPassword;
+	public LookupDTO(int lookupId) {
+		super();
+		this.lookupId = lookupId;
+	}
 
 }

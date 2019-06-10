@@ -1,8 +1,16 @@
 package com.trading.app.util;
 
+import java.beans.FeatureDescriptor;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -130,5 +138,16 @@ public class TradingAppUtil {
 			logger.error("Error Parsing API Response", e);
 		}
 		return targetObject;
+	}
+
+	public String[] getIgnorePropertyNames(Object source, String... ignoreProperties) {
+		List<String> ignoreList = (ignoreProperties != null ? Arrays.asList(ignoreProperties)
+				: new ArrayList<String>());
+
+		final BeanWrapper wrappedSource = new BeanWrapperImpl(source);
+		return Stream.of(wrappedSource.getPropertyDescriptors()).map(FeatureDescriptor::getName)
+				.filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null
+						|| ignoreList.contains(propertyName))
+				.toArray(String[]::new);
 	}
 }

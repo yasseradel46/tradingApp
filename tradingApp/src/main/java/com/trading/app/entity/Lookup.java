@@ -2,7 +2,6 @@ package com.trading.app.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +23,9 @@ public class Lookup implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "lookup_id")
-	private int lookupId;
+	private Integer lookupId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
@@ -43,7 +42,8 @@ public class Lookup implements Serializable {
 	@Column(name = "modification_date")
 	private Date modificationDate;
 
-	@Column(name = "parent_lookup")
+	@ManyToOne
+	@JoinColumn(name = "parent_lookup")
 	private Lookup parentLookup;
 
 }

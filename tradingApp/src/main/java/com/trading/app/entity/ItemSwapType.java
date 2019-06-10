@@ -22,8 +22,8 @@ public class ItemSwapType implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
 	@Column(name = "swap_value")
 	private double swapValue;
@@ -41,5 +41,5 @@ public class ItemSwapType implements Serializable {
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "swap_type")
-	private Lookup lookup;
+	private Lookup swapType;
 }

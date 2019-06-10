@@ -22,10 +22,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "item_id")
 	private int itemId;
 
@@ -58,26 +59,31 @@ public class Item implements Serializable {
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "item_quality")
+	//@Column(name = "item_quality")
 	private Lookup itemQuality;
 
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "item_status")
+	//@Column(name = "item_status")
 	private Lookup itemStatus;
 
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "item_type")
+//	@Column(name = "item_type")
 	private Lookup itemType;
 
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "item_category")
+	//@Column(name = "item_category")
 	private Lookup itemCategory;
 
 	// bi-directional many-to-one association to UserProfile
 	@ManyToOne
 	@JoinColumn(name = "item_owner")
+	//@Column(name = "item_owner")
 	private UserProfile itemOwner;
 
 	// bi-directional many-to-one association to ItemComment
@@ -85,7 +91,7 @@ public class Item implements Serializable {
 	private List<ItemComment> itemComments;
 
 	// bi-directional many-to-one association to ItemImage
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemImage> itemImages;
 
 	// bi-directional many-to-one association to ItemSwapType
@@ -93,7 +99,7 @@ public class Item implements Serializable {
 	private List<ItemSwapType> wishItemSwapTypes;
 
 	// bi-directional many-to-one association to ItemSwapType
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemSwapType> itemSwapTypes;
 
 	// bi-directional many-to-one association to OfferItem

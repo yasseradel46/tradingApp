@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.trading.app.dto.ResponseDTO;
 import com.trading.app.dto.UserProfileDTO;
+import com.trading.app.entity.FollowerUser;
 import com.trading.app.entity.UserProfile;
+import com.trading.app.repository.FollowerUserRepository;
 import com.trading.app.repository.UserProfileRepository;
 import com.trading.app.security.TradingAppAuthenticationException;
 import com.trading.app.util.TradingAppUtil;
@@ -26,16 +28,25 @@ import static com.trading.app.util.TradingAppConstant.CHANGE_PASSWORD_Fail_MSG;
 import static com.trading.app.util.TradingAppConstant.CHANGE_PASSWORD_SUCCESS_MSG;
 import static com.trading.app.util.TradingAppConstant.USER_SEND_Phone_ACTIVATION_MSG;
 import static java.util.Collections.emptyList;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
+
 import static com.trading.app.util.TradingAppConstant.INVAILD_PHONE_CODE_MSG;
 import static com.trading.app.util.TradingAppConstant.USER_PHONE_ACTIVATION_MSG;
 import static com.trading.app.util.TradingAppConstant.USER_ACTIVE_CODE;
+import static com.trading.app.util.TradingAppConstant.SUCCESS_OPERATION_MSG;
 
 @Service("userProfileService")
 @Transactional
 public class UserProfileService implements UserDetailsService {
 	@Autowired
 	private UserProfileRepository userProfileRepository;
+	@Autowired
+	private FollowerUserRepository followerUserRepository;
 	@Autowired
 	private TradingAppUtil tradingUtil;
 	@Autowired
@@ -61,9 +72,15 @@ public class UserProfileService implements UserDetailsService {
 
 	public ResponseDTO<?> saveUserProfile(UserProfileDTO userProfileDTO) {
 		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
-		userProfileRepository.updateUserInfo(userProfileDTO.getUserName(), userProfileDTO.getLocation(),
-				userProfileDTO.getPhoto(), new Date(), loggedInUserEmail);
-		BeanUtils.copyProperties(userProfileRepository.findByEmail(loggedInUserEmail), userProfileDTO);
+		byte[] decodedImage = null;
+		if (userProfileDTO.getPhoto() != null)
+			decodedImage = DatatypeConverter.parseHexBinary(userProfileDTO.getPhoto());
+		userProfileRepository.updateUserInfo(userProfileDTO.getUserName(), userProfileDTO.getLocation(), decodedImage,
+				new Date(), loggedInUserEmail);
+		UserProfile userProfile = userProfileRepository.findByEmail(loggedInUserEmail);
+		if (userProfile.getPhoto() != null)
+			userProfileDTO.setPhoto(DatatypeConverter.printHexBinary(userProfile.getPhoto()));
+		BeanUtils.copyProperties(userProfile, userProfileDTO);
 		return new ResponseDTO<UserProfileDTO>(RESPONSE_SUCCESS_CODE, userProfileDTO);
 	}
 
@@ -98,6 +115,58 @@ public class UserProfileService implements UserDetailsService {
 		return response;
 	}
 
+	public ResponseDTO<?> getRelatedUsers(boolean isFollowing, UserProfileDTO userProfileDTO) {
+		ResponseDTO<List<UserProfileDTO>> response = new ResponseDTO<List<UserProfileDTO>>(RESPONSE_SUCCESS_CODE);
+		List<UserProfileDTO> relatedUsersDTO = new ArrayList<UserProfileDTO>();
+		List<FollowerUser> users = new ArrayList<FollowerUser>();
+		UserProfile userProfile = getUserProfileInfo(userProfileDTO.getEmail());
+		if (userProfile != null) {
+			if (isFollowing) {
+				users = userProfile.getFollowerUsers();
+				if (users != null && !users.isEmpty()) {
+					users.forEach(user -> {
+						UserProfileDTO userDTO = new UserProfileDTO();
+						if (user.getFollowingUser() != null && user.getFollowingUser().getPhoto() != null)
+							userDTO.setPhoto(DatatypeConverter.printHexBinary(user.getFollowingUser().getPhoto()));
+						BeanUtils.copyProperties(user.getFollowingUser(), userDTO);
+						relatedUsersDTO.add(userDTO);
+					});
+				}
+			} else {
+				users = userProfile.getFollowingUsers();
+				if (users != null && !users.isEmpty()) {
+					users.forEach(user -> {
+						UserProfileDTO userDTO = new UserProfileDTO();
+						if (user.getFollower() != null && user.getFollower().getPhoto() != null)
+							userDTO.setPhoto(DatatypeConverter.printHexBinary(user.getFollower().getPhoto()));
+						BeanUtils.copyProperties(user.getFollower(), userDTO);
+						relatedUsersDTO.add(userDTO);
+					});
+				}
+			}
+		}
+		response.setPayload(relatedUsersDTO);
+		return response;
+	}
+
+	public ResponseDTO<?> followUser(UserProfileDTO userProfileDTO) {
+		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
+		FollowerUser followerUser = new FollowerUser();
+		followerUser.setFollowingUser(getUserProfileInfo(userProfileDTO.getEmail()));
+		followerUser.setFollower(getUserProfileInfo(loggedInUserEmail));
+		followerUser.setCreationDate(new Date());
+		followerUserRepository.save(followerUser);
+		return new ResponseDTO<String>(RESPONSE_SUCCESS_CODE, SUCCESS_OPERATION_MSG);
+	}
+
+	public ResponseDTO<?> unFollowUser(UserProfileDTO userProfileDTO) {
+		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
+		FollowerUser followerUser = followerUserRepository.findByFollowerAndFollowingUser(
+				getUserProfileInfo(loggedInUserEmail), getUserProfileInfo(userProfileDTO.getEmail()));
+		followerUserRepository.delete(followerUser);
+		return new ResponseDTO<String>(RESPONSE_SUCCESS_CODE, SUCCESS_OPERATION_MSG);
+	}
+
 	public ResponseDTO<?> sendPhoneActivation(UserProfileDTO userProfileDTO) {
 		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
 		String activationPhoneCode = tradingUtil.generateRandomPhoneActivation();
@@ -121,7 +190,7 @@ public class UserProfileService implements UserDetailsService {
 		return response;
 	}
 
-	public UserProfile getUserProfileInfo(String email) {
+	private UserProfile getUserProfileInfo(String email) {
 		return userProfileRepository.findByEmail(email);
 	}
 
