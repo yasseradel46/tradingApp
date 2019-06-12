@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.trading.app.dto.ResponseDTO;
 import com.trading.app.dto.UserProfileDTO;
+import com.trading.app.dto.UserSavedItemDTO;
 import com.trading.app.service.UserProfileService;
 import com.trading.app.util.TradingAppUtil;
 import io.swagger.annotations.ApiResponses;
@@ -45,6 +46,15 @@ import static com.trading.app.util.SwaggerConstant.USER_PROFILE_FOLLOW_USER_INFO
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UNFOLLOW_USER_INFO;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_UNFOLLOW_USER_PARAM;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_FOLLOW_USER_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_ADD_SAVED_ITEM_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_DELETE_SAVED_ITEM_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_DELETE_SAVED_ITEMS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_ADD_SAVED_ITEMS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_SAVED_ITEMS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_WISH_ITEMS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_WISH_ITEMS_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_STAFF_ITEMS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_STAFF_ITEMS_PARAM;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -205,6 +215,71 @@ public class UserProfileResource {
 			@ApiParam(value = USER_PROFILE_UNFOLLOW_USER_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
 		logger.info("unFollowUser Api received Request payload" + tradingUtil.convertObjectToString(userProfileDTO));
 		ResponseDTO<?> response = userProfileService.unFollowUser(userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getSavedItems", method = RequestMethod.GET)
+	@ApiOperation(value = USER_PROFILE_GET_SAVED_ITEMS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getSavedItems() {
+		logger.info("getSavedItems Api received Request ");
+		ResponseDTO<?> response = userProfileService.getSavedItems();
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getStaffItems", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_GET_STAFF_ITEMS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getStaffItems(
+			@ApiParam(value = USER_PROFILE_GET_STAFF_ITEMS_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("getStaffItems Api received Request payload" + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.getUserItems(true, userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getWishItems", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_GET_WISH_ITEMS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getWishItems(
+			@ApiParam(value = USER_PROFILE_GET_WISH_ITEMS_PARAM, required = true) @RequestBody UserProfileDTO userProfileDTO) {
+		logger.info("getWishItems Api received Request payload" + tradingUtil.convertObjectToString(userProfileDTO));
+		ResponseDTO<?> response = userProfileService.getUserItems(false, userProfileDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/addSavedItem", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_ADD_SAVED_ITEMS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> addSavedItem(
+			@ApiParam(value = USER_PROFILE_ADD_SAVED_ITEM_PARAM, required = true) @RequestBody UserSavedItemDTO userSavedItemDTO) {
+		logger.info("addSavedItem Api received Request payload" + tradingUtil.convertObjectToString(userSavedItemDTO));
+		ResponseDTO<?> response = userProfileService.addSavedItem(userSavedItemDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/deleteSavedItem", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_DELETE_SAVED_ITEMS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> deleteSavedItem(
+			@ApiParam(value = USER_PROFILE_DELETE_SAVED_ITEM_PARAM, required = true) @RequestBody UserSavedItemDTO userSavedItemDTO) {
+		logger.info(
+				"deleteSavedItem Api received Request payload" + tradingUtil.convertObjectToString(userSavedItemDTO));
+		ResponseDTO<?> response = userProfileService.removeSavedItem(userSavedItemDTO);
 		return ResponseEntity.ok().body(response);
 	}
 }

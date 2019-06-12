@@ -3,6 +3,8 @@ package com.trading.app.entity;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import org.hibernate.annotations.Where;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +34,7 @@ public class UserProfile implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
 	private Date creationDate;
-	
+
 	@Column(name = "email")
 	private String email;
 
@@ -71,7 +73,13 @@ public class UserProfile implements Serializable {
 
 	// bi-directional many-to-one association to Item
 	@OneToMany(mappedBy = "itemOwner")
-	private List<Item> items;
+	@Where(clause = "item_type = 8 and item_status != 5")
+	private List<Item> wishItems;
+
+	// bi-directional many-to-one association to Item
+	@OneToMany(mappedBy = "itemOwner")
+	@Where(clause = "item_type = 7 and item_status != 5")
+	private List<Item> staffItems;
 
 	// bi-directional many-to-one association to ItemComment
 	@OneToMany(mappedBy = "userProfile")

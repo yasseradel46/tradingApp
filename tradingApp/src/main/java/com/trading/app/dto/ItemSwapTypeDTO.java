@@ -15,15 +15,13 @@ public class ItemSwapTypeDTO implements Serializable {
 
 	private Integer id;
 
-	private double swapValue;
+	private Double swapValue;
 
 	private ItemDTO wishItem;
 
-	private ItemDTO item;
-
 	private LookupDTO swapType;
 
-	public ItemSwapTypeDTO(double swapValue, LookupDTO swapType) {
+	public ItemSwapTypeDTO(Double swapValue, LookupDTO swapType) {
 		super();
 		this.swapValue = swapValue;
 		this.swapType = swapType;

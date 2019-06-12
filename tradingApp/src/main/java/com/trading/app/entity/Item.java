@@ -87,7 +87,7 @@ public class Item implements Serializable {
 	private UserProfile itemOwner;
 
 	// bi-directional many-to-one association to ItemComment
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemComment> itemComments;
 
 	// bi-directional many-to-one association to ItemImage

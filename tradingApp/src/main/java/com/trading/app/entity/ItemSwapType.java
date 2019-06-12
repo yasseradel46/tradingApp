@@ -26,7 +26,7 @@ public class ItemSwapType implements Serializable {
 	private Integer id;
 
 	@Column(name = "swap_value")
-	private double swapValue;
+	private Double swapValue;
 
 	// bi-directional many-to-one association to Item
 	@ManyToOne

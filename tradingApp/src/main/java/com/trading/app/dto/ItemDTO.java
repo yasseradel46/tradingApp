@@ -42,7 +42,9 @@ public class ItemDTO {
 	private UserProfileDTO itemOwner;
 
 	private List<ItemSwapTypeDTO> itemSwapTypes;
-	
+
 	private List<ItemImageDTO> itemImages;
+
+	private List<CommentDTO> itemComments;
 
 }

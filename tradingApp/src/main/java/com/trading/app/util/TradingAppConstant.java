@@ -32,5 +32,7 @@ public class TradingAppConstant {
 	public static final Integer ITEM_AVAILABLE_STATUS = 6;
 	public static final Integer ITEM_DELETED_STATUS = 5;
 	public static final Integer ITEM_SWAPED_STATUS = 4;
+	public static final Integer WISH_ITEM = 8;
+	public static final Integer STAFF_ITEM = 7;
 
 }

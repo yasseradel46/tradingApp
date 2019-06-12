@@ -1,5 +1,6 @@
 package com.trading.app.service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -9,12 +10,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.trading.app.dto.ItemDTO;
 import com.trading.app.dto.ResponseDTO;
 import com.trading.app.dto.UserProfileDTO;
+import com.trading.app.dto.UserSavedItemDTO;
 import com.trading.app.entity.FollowerUser;
+import com.trading.app.entity.Item;
 import com.trading.app.entity.UserProfile;
+import com.trading.app.entity.UserSavedItem;
 import com.trading.app.repository.FollowerUserRepository;
 import com.trading.app.repository.UserProfileRepository;
+import com.trading.app.repository.UserSavedItemRepository;
 import com.trading.app.security.TradingAppAuthenticationException;
 import com.trading.app.util.TradingAppUtil;
 import static com.trading.app.util.TradingAppConstant.EMAIL_EXIST_MSG;
@@ -48,9 +55,13 @@ public class UserProfileService implements UserDetailsService {
 	@Autowired
 	private FollowerUserRepository followerUserRepository;
 	@Autowired
+	UserSavedItemRepository userSavedItemRepository;
+	@Autowired
 	private TradingAppUtil tradingUtil;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private ModelMapper mapper;
 
 	public ResponseDTO<?> registerUserProfile(UserProfileDTO userProfileDTO) {
 		ResponseDTO<?> response = null;
@@ -188,6 +199,57 @@ public class UserProfileService implements UserDetailsService {
 			response = new ResponseDTO<String>(RESPONSE_INVALID_CODE, CHANGE_PASSWORD_Fail_MSG);
 		}
 		return response;
+	}
+
+	public ResponseDTO<?> getSavedItems() {
+		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
+		UserProfile userProfile = userProfileRepository.findByEmail(loggedInUserEmail);
+		List<UserSavedItem> savedItems = userProfile.getUserSavedItems();
+		List<UserSavedItemDTO> savedItemsDTO = new ArrayList<UserSavedItemDTO>();
+		if (savedItems != null) {
+			savedItems.forEach(savedItem -> {
+				UserSavedItemDTO itemDto = mapper.map(savedItem, UserSavedItemDTO.class);
+				savedItemsDTO.add(itemDto);
+			});
+		}
+		return new ResponseDTO<List<UserSavedItemDTO>>(RESPONSE_SUCCESS_CODE, savedItemsDTO);
+	}
+
+	public ResponseDTO<?> getUserItems(boolean isStaff, UserProfileDTO userProfileDTO) {
+		List<ItemDTO> itemsDTO = new ArrayList<ItemDTO>();
+		List<Item> items = new ArrayList<Item>();
+		UserProfile userProfile = getUserProfileInfo(userProfileDTO.getEmail());
+		if (userProfile != null) {
+			if (isStaff) {
+				items = userProfile.getStaffItems();
+			} else {
+				items = userProfile.getWishItems();
+			}
+			if (items != null && !items.isEmpty()) {
+				items.forEach(item -> {
+					ItemDTO itemDTO = new ItemDTO();
+					mapper.map(item, itemDTO);
+					itemsDTO.add(itemDTO);
+				});
+			}
+		}
+		return new ResponseDTO<List<ItemDTO>>(RESPONSE_SUCCESS_CODE, itemsDTO);
+	}
+
+	public ResponseDTO<?> addSavedItem(UserSavedItemDTO userSavedItemDTO) {
+		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
+		UserProfile userProfile = userProfileRepository.findByEmail(loggedInUserEmail);
+		UserSavedItem userSavedItem = new UserSavedItem();
+		mapper.map(userSavedItemDTO, userSavedItem);
+		userSavedItem.setCreationDate(new Date());
+		userSavedItem.setUserProfile(userProfile);
+		userSavedItemRepository.save(userSavedItem);
+		return new ResponseDTO<String>(RESPONSE_SUCCESS_CODE, SUCCESS_OPERATION_MSG);
+	}
+
+	public ResponseDTO<?> removeSavedItem(UserSavedItemDTO userSavedItemDTO) {
+		userSavedItemRepository.deleteById(userSavedItemDTO.getId());
+		return new ResponseDTO<String>(RESPONSE_SUCCESS_CODE, SUCCESS_OPERATION_MSG);
 	}
 
 	private UserProfile getUserProfileInfo(String email) {
