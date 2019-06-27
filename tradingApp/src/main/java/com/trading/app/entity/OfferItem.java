@@ -25,14 +25,14 @@ public class OfferItem implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
 	private Date creationDate;
 
 	@Column(name = "swap_value")
-	private double swapValue;
+	private Double swapValue;
 
 	// bi-directional many-to-one association to Item
 	@ManyToOne
@@ -42,7 +42,7 @@ public class OfferItem implements Serializable {
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "swap_type")
-	private Lookup lookup;
+	private Lookup swapType;
 
 	// bi-directional many-to-one association to UserOffer
 	@ManyToOne

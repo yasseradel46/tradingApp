@@ -26,7 +26,7 @@ public class UserOffer implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
@@ -37,7 +37,7 @@ public class UserOffer implements Serializable {
 	private Date modificationDate;
 
 	// bi-directional many-to-one association to OfferItem
-	@OneToMany(mappedBy = "userOffer")
+	@OneToMany(mappedBy = "userOffer", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OfferItem> offerItems;
 
 	// bi-directional many-to-one association to Item

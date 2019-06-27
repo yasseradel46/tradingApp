@@ -25,7 +25,7 @@ public class ReportedUser implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_date")
@@ -37,7 +37,7 @@ public class ReportedUser implements Serializable {
 	// bi-directional many-to-one association to Lookup
 	@ManyToOne
 	@JoinColumn(name = "report_reason")
-	private Lookup lookup;
+	private Lookup reportReson;
 
 	// bi-directional many-to-one association to UserProfile
 	@ManyToOne

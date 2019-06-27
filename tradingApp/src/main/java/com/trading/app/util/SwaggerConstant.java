@@ -7,18 +7,32 @@ public class SwaggerConstant {
 	public static final String NOT_FOUND_OPERATION = "The resource you were trying to reach is not found";
 	public static final String USER_PROFILE_RESOURCE_INFO = "Manage All Operations related with Trading User";
 	public static final String ITEM_RESOURCE_INFO = "Manage All Operations related with Items";
+	public static final String OFFER_RESOURCE_INFO = "Manage All Operations related with Offers";
+
 	public static final String SAVE_ITEM_INFO = "Save Item Api used to save staff or wish Items";
+	public static final String SAVE_OFFER_INFO = "Save Offer Api used to create and change Offer";
+
 	public static final String SAVE_ITEM_COMMENT_INFO = "Save Item Comment Api used to save comments for Items";
 	public static final String SAVE_ITEM_COMMENT_PARAM = "ItemCommentDTO object with Item and related Comment";
+	public static final String SAVE_OFFER_PARAM = "UserOfferDTO object with target Item and Your Offered Items";
 
 	public static final String SAVE_ITEM_PARAM = "ItemDTO object with Item name,description,location,category,quality,type,Images and SwapTypes";
-	public static final String VIEW_ITEM_INFO = "VIew Item Api used to get all info for Item";
-	public static final String DELETE_ITEM_INFO = "Delete Item Api by using itemId";
-	public static final String DELETE_ITEM_COMMENT_INFO = "Delete Item comment Api by using commentId";
+	public static final String VIEW_ITEM_INFO = "View Item Api used to get all info for Item";
+	public static final String VIEW_OFFER_INFO = "View Offer Api used to get all info for Offer";
 
+	public static final String DELETE_ITEM_INFO = "Delete Item Api by using itemId";
+	public static final String CANCEL_OFFER_INFO = "Cancel Offer Api by using offerId";
+	public static final String ACCEPT_OFFER_INFO = "accept Offer Api by using offerId";
+
+	public static final String DELETE_ITEM_COMMENT_INFO = "Delete Item comment Api by using commentId";
 	public static final String VIEW_ITEM_PARAM = "ItemDTO object with at least itemId";
+
+	public static final String VIEW_OFFER_PARAM = "UserOfferDTO object with at least offerId";
 	public static final String DELETE_ITEM_PARAM = "ItemDTO object with at least itemId";
 	public static final String DELETE_ITEM_COMMENT_PARAM = "ItemCommentDTO object with at least commentId";
+
+	public static final String CANCEL_OFFER_PARAM = "UserOfferDTO object with at least offerId";
+	public static final String ACCEPT_OFFER_PARAM = "UserOfferDTO object with at least offerId";
 
 	public static final String USER_PROFILE_SIGNUP_INFO = "signup User Profile Info";
 	public static final String USER_PROFILE_UPDATE_INFO = "Update User Profile Info";
@@ -40,10 +54,15 @@ public class SwaggerConstant {
 	public static final String USER_PROFILE_GET_SAVED_ITEMS_INFO = "get User Saved Items ";
 	public static final String USER_PROFILE_GET_STAFF_ITEMS_INFO = "get User Staff Items ";
 	public static final String USER_PROFILE_GET_WISH_ITEMS_INFO = "get User Wish Items ";
+	public static final String USER_PROFILE_GET_SENT_OFFERS_INFO = "get Sent Offers ";
+	public static final String USER_PROFILE_GET_RECEIVED_OFFERS_INFO = "get Received Offers ";
+	public static final String USER_PROFILE_GET_DEALS_INFO = "get User Deals with Others ";
 	public static final String USER_PROFILE_GET_WISH_ITEMS_PARAM = "UserProfileDTO object with at least UserID to get wishItems";
 	public static final String USER_PROFILE_GET_STAFF_ITEMS_PARAM = "UserProfileDTO object with at least UserID to get staffItems";
 	public static final String USER_PROFILE_ADD_SAVED_ITEMS_INFO = "Add Item as SavedItems for User ";
 	public static final String USER_PROFILE_DELETE_SAVED_ITEMS_INFO = "remove  SavedItem for User ";
+	public static final String USER_PROFILE_REPORT_USER_INFO = "Used to report about User for Some Resons ";
+	public static final String USER_PROFILE_REPORT_USER_PARAM = "ReportedUserDTO object with reportedUser and Report Reson ";
 	public static final String USER_PROFILE_FOLLOW_USER_INFO = "Follow User ";
 	public static final String USER_PROFILE_UNFOLLOW_USER_INFO = "Unfollow User ";
 	public static final String USER_PROFILE_FOLLOW_USER_PARAM = "UserProfileDTO object with at least followed userEmail";
