@@ -10,16 +10,22 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.trading.app.dto.ItemDTO;
+import com.trading.app.dto.ReportedUserDTO;
 import com.trading.app.dto.ResponseDTO;
+import com.trading.app.dto.UserOfferDTO;
 import com.trading.app.dto.UserProfileDTO;
 import com.trading.app.dto.UserSavedItemDTO;
 import com.trading.app.entity.FollowerUser;
 import com.trading.app.entity.Item;
+import com.trading.app.entity.Lookup;
+import com.trading.app.entity.ReportedUser;
+import com.trading.app.entity.UserOffer;
 import com.trading.app.entity.UserProfile;
 import com.trading.app.entity.UserSavedItem;
 import com.trading.app.repository.FollowerUserRepository;
+import com.trading.app.repository.ReportedUserRepository;
+import com.trading.app.repository.UserOfferRepository;
 import com.trading.app.repository.UserProfileRepository;
 import com.trading.app.repository.UserSavedItemRepository;
 import com.trading.app.security.TradingAppAuthenticationException;
@@ -46,6 +52,9 @@ import static com.trading.app.util.TradingAppConstant.INVAILD_PHONE_CODE_MSG;
 import static com.trading.app.util.TradingAppConstant.USER_PHONE_ACTIVATION_MSG;
 import static com.trading.app.util.TradingAppConstant.USER_ACTIVE_CODE;
 import static com.trading.app.util.TradingAppConstant.SUCCESS_OPERATION_MSG;
+import static com.trading.app.util.TradingAppConstant.OFFER_CREATED_STATUS;
+import static com.trading.app.util.TradingAppConstant.OFFER_CHANGED_STATUS;
+import static com.trading.app.util.TradingAppConstant.OFFER_ACCEPTED_STATUS;
 
 @Service("userProfileService")
 @Transactional
@@ -57,11 +66,15 @@ public class UserProfileService implements UserDetailsService {
 	@Autowired
 	UserSavedItemRepository userSavedItemRepository;
 	@Autowired
+	ReportedUserRepository reportedUserRepository;
+	@Autowired
 	private TradingAppUtil tradingUtil;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private ModelMapper mapper;
+	@Autowired
+	private UserOfferRepository userOfferRepository;
 
 	public ResponseDTO<?> registerUserProfile(UserProfileDTO userProfileDTO) {
 		ResponseDTO<?> response = null;
@@ -236,6 +249,37 @@ public class UserProfileService implements UserDetailsService {
 		return new ResponseDTO<List<ItemDTO>>(RESPONSE_SUCCESS_CODE, itemsDTO);
 	}
 
+	public ResponseDTO<?> getUserOffers(int offerType) {
+		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
+		UserProfile userProfile = userProfileRepository.findByEmail(loggedInUserEmail);
+		List<UserOfferDTO> userOffersDTO = new ArrayList<UserOfferDTO>();
+		List<UserOffer> userOffers = new ArrayList<UserOffer>();
+		List<Lookup> availableStatus = new ArrayList<Lookup>();
+		Lookup createdStatus = new Lookup();
+		Lookup changedStatus = new Lookup();
+		Lookup acceptedStatus = new Lookup();
+		createdStatus.setLookupId(OFFER_CREATED_STATUS);
+		changedStatus.setLookupId(OFFER_CHANGED_STATUS);
+		acceptedStatus.setLookupId(OFFER_ACCEPTED_STATUS);
+		availableStatus.add(createdStatus);
+		availableStatus.add(changedStatus);
+		if (offerType == 1) {
+			userOffers = userOfferRepository.getSentOffers(userProfile, availableStatus);
+		} else if (offerType == 2) {
+			userOffers = userOfferRepository.getRecievedOffers(userProfile, availableStatus);
+		} else {
+			userOffers = userOfferRepository.getDeals(userProfile, acceptedStatus);
+		}
+		if (userOffers != null && !userOffers.isEmpty()) {
+			userOffers.forEach(offer -> {
+				UserOfferDTO offerDTO = new UserOfferDTO();
+				mapper.map(offer, offerDTO);
+				userOffersDTO.add(offerDTO);
+			});
+		}
+		return new ResponseDTO<List<UserOfferDTO>>(RESPONSE_SUCCESS_CODE, userOffersDTO);
+	}
+
 	public ResponseDTO<?> addSavedItem(UserSavedItemDTO userSavedItemDTO) {
 		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
 		UserProfile userProfile = userProfileRepository.findByEmail(loggedInUserEmail);
@@ -244,6 +288,17 @@ public class UserProfileService implements UserDetailsService {
 		userSavedItem.setCreationDate(new Date());
 		userSavedItem.setUserProfile(userProfile);
 		userSavedItemRepository.save(userSavedItem);
+		return new ResponseDTO<String>(RESPONSE_SUCCESS_CODE, SUCCESS_OPERATION_MSG);
+	}
+
+	public ResponseDTO<?> reportUser(ReportedUserDTO reportedUserDTO) {
+		String loggedInUserEmail = tradingUtil.getLoggedInUserEmail();
+		UserProfile userProfile = userProfileRepository.findByEmail(loggedInUserEmail);
+		ReportedUser reportedUser = new ReportedUser();
+		mapper.map(reportedUserDTO, reportedUser);
+		reportedUser.setCreationDate(new Date());
+		reportedUser.setReporterUser(userProfile);
+		reportedUserRepository.save(reportedUser);
 		return new ResponseDTO<String>(RESPONSE_SUCCESS_CODE, SUCCESS_OPERATION_MSG);
 	}
 

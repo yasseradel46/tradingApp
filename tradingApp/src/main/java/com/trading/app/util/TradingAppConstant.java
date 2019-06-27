@@ -34,5 +34,8 @@ public class TradingAppConstant {
 	public static final Integer ITEM_SWAPED_STATUS = 4;
 	public static final Integer WISH_ITEM = 8;
 	public static final Integer STAFF_ITEM = 7;
-
+	public static final Integer OFFER_CREATED_STATUS = 15;
+	public static final Integer OFFER_CHANGED_STATUS = 16;
+	public static final Integer OFFER_CANCELLED_STATUS = 17;
+	public static final Integer OFFER_ACCEPTED_STATUS = 18;
 }

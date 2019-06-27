@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.trading.app.dto.ReportedUserDTO;
 import com.trading.app.dto.ResponseDTO;
 import com.trading.app.dto.UserProfileDTO;
 import com.trading.app.dto.UserSavedItemDTO;
@@ -55,6 +57,11 @@ import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_WISH_ITEMS_I
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_WISH_ITEMS_PARAM;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_STAFF_ITEMS_INFO;
 import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_STAFF_ITEMS_PARAM;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_SENT_OFFERS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_RECEIVED_OFFERS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_GET_DEALS_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_REPORT_USER_INFO;
+import static com.trading.app.util.SwaggerConstant.USER_PROFILE_REPORT_USER_PARAM;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -256,6 +263,42 @@ public class UserProfileResource {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@RequestMapping(path = "/getSentOffers", method = RequestMethod.GET)
+	@ApiOperation(value = USER_PROFILE_GET_SENT_OFFERS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getSentOffers() {
+		logger.info("getSentOffers Api received Request");
+		ResponseDTO<?> response = userProfileService.getUserOffers(1);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getRecievedOffers", method = RequestMethod.GET)
+	@ApiOperation(value = USER_PROFILE_GET_RECEIVED_OFFERS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getRecievedOffers() {
+		logger.info("getRecievedOffers Api received Request");
+		ResponseDTO<?> response = userProfileService.getUserOffers(2);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/getDeals", method = RequestMethod.GET)
+	@ApiOperation(value = USER_PROFILE_GET_DEALS_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> getDeals() {
+		logger.info("getDeals Api received Request");
+		ResponseDTO<?> response = userProfileService.getUserOffers(3);
+		return ResponseEntity.ok().body(response);
+	}
+
 	@RequestMapping(path = "/addSavedItem", method = RequestMethod.POST)
 	@ApiOperation(value = USER_PROFILE_ADD_SAVED_ITEMS_INFO)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
@@ -280,6 +323,19 @@ public class UserProfileResource {
 		logger.info(
 				"deleteSavedItem Api received Request payload" + tradingUtil.convertObjectToString(userSavedItemDTO));
 		ResponseDTO<?> response = userProfileService.removeSavedItem(userSavedItemDTO);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@RequestMapping(path = "/reportUser", method = RequestMethod.POST)
+	@ApiOperation(value = USER_PROFILE_REPORT_USER_INFO)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = SUCCESS_OPERATION),
+			@ApiResponse(code = 401, message = NOT_AUTHORIZED_OPERATION),
+			@ApiResponse(code = 403, message = FORBIDDEN_OPERATION),
+			@ApiResponse(code = 404, message = NOT_FOUND_OPERATION) })
+	public ResponseEntity<ResponseDTO<?>> reportUser(
+			@ApiParam(value = USER_PROFILE_REPORT_USER_PARAM, required = true) @RequestBody ReportedUserDTO reportedUserDTO) {
+		logger.info("reportUser Api received Request payload" + tradingUtil.convertObjectToString(reportedUserDTO));
+		ResponseDTO<?> response = userProfileService.reportUser(reportedUserDTO);
 		return ResponseEntity.ok().body(response);
 	}
 }
