@@ -67,7 +67,7 @@ import static com.trading.app.util.SwaggerConstant.USER_PROFILE_REPORT_USER_PARA
 @RequestMapping(path = "/user")
 @Api(tags = { USER_PROFILE_RESOURCE_INFO })
 public class UserProfileResource {
-// commit
+// commit hot fixing
 	Logger logger = LoggerFactory.getLogger(UserProfileResource.class);
 
 	@Autowired
